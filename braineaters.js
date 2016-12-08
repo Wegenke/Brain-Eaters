@@ -1,8 +1,6 @@
-var canvas = document.getElementById("myCanvas");
-var ctx = canvas.getContext("2d");
-var img = new Image(35, 35);
-img.src = "mario.jpg";
-var keyInput = new KeyboardInput();
+var canvas;
+var ctx;
+var img;
 var x = 50;
 var y = 50;
 function gameLoop() {
@@ -60,6 +58,10 @@ function marioRight() {
     x += 2;
 }
 window.onload = function () {
+    img = document.getElementById("mario");
+    canvas = document.getElementById("myCanvas");
+    ctx = canvas.getContext("2d");
+    keyInput = new KeyboardInput();
     keyInput.addKeycodeCallback(37, marioLeft);
     keyInput.addKeycodeCallback(65, marioLeft);
     keyInput.addKeycodeCallback(38, marioUp);

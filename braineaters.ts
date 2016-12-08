@@ -1,9 +1,6 @@
-let canvas = <HTMLCanvasElement>document.getElementById("myCanvas");
-let ctx = canvas.getContext("2d");
-let img = new Image(35, 35);
-img.src = "mario.jpg";
-
-let keyInput = new KeyboardInput();
+let canvas;
+let ctx;
+let img;
 let x: number = 50;
 let y: number = 50;
 
@@ -72,6 +69,11 @@ function marioRight(): void {
 }
 
 window.onload = () => {
+  img = <HTMLImageElement>document.getElementById("mario");
+  canvas = <HTMLCanvasElement>document.getElementById("myCanvas");
+  ctx  = canvas.getContext("2d");
+
+  keyInput = new KeyboardInput();
    // PRESS LEFT ARROW OR 'A' KEY
    keyInput.addKeycodeCallback(37, marioLeft);
    keyInput.addKeycodeCallback(65, marioLeft);
