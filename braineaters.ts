@@ -1,21 +1,29 @@
 let canvas;
 let ctx;
-let img;
+let hero = new Image();
+let baddy = new Image();
 let x: number = 50;
 let y: number = 50;
+
+function baddyBank(){
+  // ctx.fillRect(0, 0, 700, 700);
+  ctx.drawImage(baddy, 500, 500, baddy.width, baddy.height);
+  ctx.save();
+  // ctx.translate(x, y)
+}
 
 function gameLoop(): void {
   requestAnimationFrame(gameLoop);
   keyInput.inputLoop();
-
   ctx.fillStyle = "#26034d";
   ctx.fillRect(0, 0, 900, 700);
-
   ctx.save();
   ctx.translate(x, y);
-  ctx.drawImage(img, 0, 0, img.width, img.height);
-  ctx.restore();
+  ctx.drawImage(hero, 0, 0, hero.width, hero.height);
+  ctx.restore(); 
+  baddyBank();
 }
+
 
 class KeyboardInput {
    public keyCallback: { [keycode: number]: () => void; } = {};
@@ -52,43 +60,45 @@ class KeyboardInput {
   }
 }
 
-function marioUp(): void {
+function ddplUp(): void {
   y -= 2;
 }
 
-function marioDown(): void {
+function ddplDown(): void {
   y += 2;
 }
 
-function marioLeft(): void {
+function ddplLeft(): void {
   x -= 2;
 }
 
-function marioRight(): void {
+function ddplRight(): void {
   x += 2;
 }
 
 window.onload = () => {
-  img = <HTMLImageElement>document.getElementById("mario");
+  hero = <HTMLImageElement>document.getElementById("ddpl");
+  baddy = <HTMLImageElement>document.getElementById("zed");
   canvas = <HTMLCanvasElement>document.getElementById("myCanvas");
   ctx  = canvas.getContext("2d");
 
   keyInput = new KeyboardInput();
    // PRESS LEFT ARROW OR 'A' KEY
-   keyInput.addKeycodeCallback(37, marioLeft);
-   keyInput.addKeycodeCallback(65, marioLeft);
+   keyInput.addKeycodeCallback(37, ddplLeft);
+   keyInput.addKeycodeCallback(65, ddplLeft);
 
    // PRESS UP ARROW OR 'W' KEY
-   keyInput.addKeycodeCallback(38, marioUp);
-   keyInput.addKeycodeCallback(87, marioUp);
+   keyInput.addKeycodeCallback(38, ddplUp);
+   keyInput.addKeycodeCallback(87, ddplUp);
 
    // PRESS RIGHT ARROW OR 'D' KEY
-   keyInput.addKeycodeCallback(39, marioRight);
-   keyInput.addKeycodeCallback(68, marioRight);
+   keyInput.addKeycodeCallback(39, ddplRight);
+   keyInput.addKeycodeCallback(68, ddplRight);
 
    // PRESS DOWN ARROW OR 'S' KEY
-   keyInput.addKeycodeCallback(40, marioDown);
-   keyInput.addKeycodeCallback(83, marioDown);
+   keyInput.addKeycodeCallback(40, ddplDown);
+   keyInput.addKeycodeCallback(83, ddplDown);
 
    gameLoop();
 };
+
