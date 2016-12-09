@@ -82,7 +82,7 @@ window.onload = () => {
   canvas = <HTMLCanvasElement>document.getElementById("myCanvas");
   ctx  = canvas.getContext("2d");
 
-  keyInput = new KeyboardInput();
+  keyInput = new KeyboardInput(); 
    // PRESS LEFT ARROW OR 'A' KEY
    keyInput.addKeycodeCallback(37, ddplLeft);
    keyInput.addKeycodeCallback(65, ddplLeft);
