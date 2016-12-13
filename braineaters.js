@@ -1,45 +1,64 @@
 var canvas;
 var ctx;
 var hero = new Image();
-var baddy = new Image();
 var x = 50;
 var y = 50;
-var xx = 10;
-var xxx = false;
+var baddyXPosition = 10;
+var baddyMovingLeft = false;
 // let zx1: boolean = false;
 // let zx2: boolean = false;
 // let zx3: boolean = false;
 // let zx4: boolean = false;
-function moveBaddyRight() {
-    ctx.drawImage(baddy, xx, 500, 45, 45);
-    xx += 5;
-    ctx.save();
-}
-function moveBaddyLeft() {
-    ctx.drawImage(baddy, xx, 500, 45, 45);
-    xx -= 5;
-    ctx.save();
-}
-function baddyMoves() {
-    if (xxx) {
-        moveBaddyLeft();
-        if (xx <= 0)
-            return xxx = false;
+var Zombie = (function () {
+    function Zombie(xpos, ypos) {
+        this.zombieXPixels = 45;
+        this.zombieYPixels = 45;
+        this.zombieImage = document.getElementById("zed");
+        this.zombieXPosition = xpos;
+        this.zombieYPosition = ypos;
     }
-    else if (!xxx) {
-        moveBaddyRight();
-        if (xx >= 800) {
-            return xxx = true;
-        }
-    }
-}
+    Zombie.prototype.buildZombie = function () {
+        ctx.drawImage(this.zombieImage, this.zombieXPosition, this.zombieYPosition, this.zombieXPixels, this.zombieYPixels);
+    };
+    return Zombie;
+}());
 ;
+var zed1 = new Zombie(200, 200);
+var zed2 = new Zombie(300, 300);
+var zed3 = new Zombie(400, 400);
+var zed4 = new Zombie(500, 500);
+var zed5 = new Zombie(600, 600);
+// function moveBaddyRight (){
+//       ctx.drawImage(baddy, baddyXPosition, 500, 45, 45);
+//       baddyXPosition += 5;
+//       ctx.save();
+//     }
+// function moveBaddyLeft (){
+//       ctx.drawImage(baddy,baddyXPosition, 500, 45, 45);
+//       baddyXPosition -= 5;
+//       ctx.save();
+//       }
+// function baddyMoves(){
+//   if (baddyMovingLeft){
+//     moveBaddyLeft();
+//     if (baddyXPosition <= 0)
+//         return baddyMovingLeft = false;
+//   }else if(!baddyMovingLeft){
+//     moveBaddyRight();
+//     if (baddyXPosition >= 800){
+//        return baddyMovingLeft = true;
+//     }
+// }};
 function gameLoop() {
     requestAnimationFrame(gameLoop);
     keyInput.inputLoop();
     ctx.fillStyle = "gray";
     ctx.fillRect(0, 0, 845, 800);
-    baddyMoves();
+    zed1.buildZombie();
+    zed2.buildZombie();
+    zed3.buildZombie();
+    zed4.buildZombie();
+    zed5.buildZombie();
     ctx.save();
     ctx.translate(x, y);
     ctx.drawImage(hero, 0, 0, 45, 45);
