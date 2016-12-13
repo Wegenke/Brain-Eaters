@@ -4,23 +4,48 @@ var hero = new Image();
 var baddy = new Image();
 var x = 50;
 var y = 50;
-function baddyBank() {
-    // ctx.fillRect(0, 0, 700, 700);
-    ctx.drawImage(baddy, 500, 500, baddy.width, baddy.height);
+var xx = 10;
+var xxx = false;
+// let zx1: boolean = false;
+// let zx2: boolean = false;
+// let zx3: boolean = false;
+// let zx4: boolean = false;
+function moveBaddyRight() {
+    ctx.drawImage(baddy, xx, 500, 45, 45);
+    xx += 5;
     ctx.save();
-    // ctx.translate(x, y)
 }
+function moveBaddyLeft() {
+    ctx.drawImage(baddy, xx, 500, 45, 45);
+    xx -= 5;
+    ctx.save();
+}
+function baddyMoves() {
+    if (xxx) {
+        moveBaddyLeft();
+        if (xx <= 0)
+            return xxx = false;
+    }
+    else if (!xxx) {
+        moveBaddyRight();
+        if (xx >= 800) {
+            return xxx = true;
+        }
+    }
+}
+;
 function gameLoop() {
     requestAnimationFrame(gameLoop);
     keyInput.inputLoop();
-    ctx.fillStyle = "#26034d";
-    ctx.fillRect(0, 0, 900, 700);
+    ctx.fillStyle = "gray";
+    ctx.fillRect(0, 0, 845, 800);
+    baddyMoves();
     ctx.save();
     ctx.translate(x, y);
-    ctx.drawImage(hero, 0, 0, hero.width, hero.height);
+    ctx.drawImage(hero, 0, 0, 45, 45);
     ctx.restore();
-    baddyBank();
 }
+;
 var KeyboardInput = (function () {
     function KeyboardInput() {
         var _this = this;
@@ -53,18 +78,23 @@ var KeyboardInput = (function () {
     }
     return KeyboardInput;
 }());
+;
 function ddplUp() {
     y -= 2;
 }
+;
 function ddplDown() {
     y += 2;
 }
+;
 function ddplLeft() {
     x -= 2;
 }
+;
 function ddplRight() {
     x += 2;
 }
+;
 window.onload = function () {
     hero = document.getElementById("ddpl");
     baddy = document.getElementById("zed");

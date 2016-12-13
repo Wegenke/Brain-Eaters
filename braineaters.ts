@@ -4,25 +4,51 @@ let hero = new Image();
 let baddy = new Image();
 let x: number = 50;
 let y: number = 50;
+let baddyXPosition: number = 10;
+let baddyMovingLeft: boolean = false;
+// let zx1: boolean = false;
+// let zx2: boolean = false;
+// let zx3: boolean = false;
+// let zx4: boolean = false;
 
-function baddyBank(){
-  // ctx.fillRect(0, 0, 700, 700);
-  ctx.drawImage(baddy, 500, 500, baddy.width, baddy.height);
-  ctx.save();
-  // ctx.translate(x, y)
-}
+
+function moveBaddyRight (){
+      ctx.drawImage(baddy, baddyXPosition, 500, 45, 45);
+      baddyXPosition += 5;
+      ctx.save();
+    }
+
+function moveBaddyLeft (){
+      ctx.drawImage(baddy,baddyXPosition, 500, 45, 45);
+      baddyXPosition -= 5;
+      ctx.save();
+      }
+
+function baddyMoves(){
+  if (baddyMovingLeft){
+    moveBaddyLeft();
+    if (baddyXPosition <= 0)
+        return baddyMovingLeft = false;
+  }else if(!baddyMovingLeft){
+    moveBaddyRight();
+    if (baddyXPosition >= 800){
+       return baddyMovingLeft = true;
+    }
+}};
+
 
 function gameLoop(): void {
   requestAnimationFrame(gameLoop);
   keyInput.inputLoop();
-  ctx.fillStyle = "#26034d";
-  ctx.fillRect(0, 0, 900, 700);
+  ctx.fillStyle = "gray";
+  ctx.fillRect(0, 0, 845, 800);
+  baddyMoves();
   ctx.save();
   ctx.translate(x, y);
-  ctx.drawImage(hero, 0, 0, hero.width, hero.height);
+  ctx.drawImage(hero, 0, 0, 45,45); 
   ctx.restore(); 
-  baddyBank();
-}
+  };
+
 
 
 class KeyboardInput {
@@ -58,29 +84,29 @@ class KeyboardInput {
           }
       }
   }
-}
+};
 
 function ddplUp(): void {
   y -= 2;
-}
+};
 
 function ddplDown(): void {
   y += 2;
-}
+};
 
 function ddplLeft(): void {
   x -= 2;
-}
+};
 
 function ddplRight(): void {
   x += 2;
-}
+};
 
 window.onload = () => {
   hero = <HTMLImageElement>document.getElementById("ddpl");
   baddy = <HTMLImageElement>document.getElementById("zed");
   canvas = <HTMLCanvasElement>document.getElementById("myCanvas");
-  ctx  = canvas.getContext("2d");
+  ctx = canvas.getContext("2d");
 
   keyInput = new KeyboardInput(); 
    // PRESS LEFT ARROW OR 'A' KEY

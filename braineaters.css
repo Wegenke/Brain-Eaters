@@ -4,16 +4,14 @@ canvas{
 #ddpl {
     left: 0;
     top: 0;
-    /*height: 50px;
-    width: 50px;*/
+
     display: none;
 }
 
 #zed{
   left: 890;
   top: 590;
-  height: 50px;
-  width: 50px;
+
   display: none;
 
 }
