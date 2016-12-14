@@ -1,75 +1,92 @@
-let canvas;
-let ctx;
-let hero = new Image();
-let x: number = 50;
-let y: number = 50;
-let baddyXPosition: number = 10;
-let baddyMovingLeft: boolean = false;
-// let zx1: boolean = false;
-// let zx2: boolean = false;
-// let zx3: boolean = false;
-// let zx4: boolean = false;
+let canvas = <HTMLCanvasElement>document.getElementById("myCanvas");;
+let ctx = canvas.getContext("2d");
+let x: number = 10;
+let y: number = 10;
+let gameOver: boolean = false;
 
 class Zombie {
-  public zombieMovingLeft: boolean;
+  public zombieMovingLeft: boolean = false;
+  public zombieImage;
   public zombieXPosition: number;
   public zombieYPosition: number;
-  public zombieXPixels: number = 45;
-  public zombieYPixels: number = 45;
-  public zombieImage = <HTMLImageElement>document.getElementById("zed");
+  public zombieXPixels: number = 50;
+  public zombieYPixels: number = 50;  
+  public speed = (Math.random()*10)*2;
   constructor(xpos:number,ypos:number) {
     this.zombieXPosition = xpos;
     this.zombieYPosition = ypos;
   }
-  buildZombie() {
+
+  moveRight(){
+    this.zombieImage = <HTMLImageElement>document.getElementById("dez");
     ctx.drawImage(this.zombieImage, this.zombieXPosition, this.zombieYPosition, this.zombieXPixels, this.zombieYPixels);
+    this.zombieXPosition += this.speed;
+    if (this.zombieXPosition >= 800 ){
+      this.zombieMovingLeft = true
+    } 
+    ctx.save(); 
+  } 
+  moveLeft (){
+    this.zombieImage = <HTMLImageElement>document.getElementById("zed");
+    ctx.drawImage(this.zombieImage, this.zombieXPosition, this.zombieYPosition, this.zombieXPixels, this.zombieYPixels);
+    this.zombieXPosition -= this.speed;
+    if (this.zombieXPosition <= 0){
+      this.zombieMovingLeft = false;
+    }
+    ctx.save();
   }
+
+  move(){
+    if(this.zombieMovingLeft){
+      this.moveLeft();
+    }else if(!this.zombieMovingLeft){
+      this.moveRight();
+    }
+  }
+
 };
 
-let zed1 = new Zombie(200,200);
-let zed2 = new Zombie(300,300);
-let zed3 = new Zombie(400,400);
-let zed4 = new Zombie(500,500);
-let zed5 = new Zombie(600,600);
+class Hero{
+  public touchedAZombie: boolean = false;
+  public heroImage = <HTMLImageElement>document.getElementById("ddpl");
+  public heroXPosition: number = 0;
+  public heroYPosition: number = 0;
+  public heroXPixels: number = 50;
+  public heroYPixels: number = 50;
+ 
+  contact(){
 
-// function moveBaddyRight (){
-//       ctx.drawImage(baddy, baddyXPosition, 500, 45, 45);
-//       baddyXPosition += 5;
-//       ctx.save();
-//     }
+  }
+  build(){
+     ctx.translate(x, y);
+     ctx.drawImage(this.heroImage, this.heroXPosition, this.heroYPosition, this.heroXPixels, this.heroYPixels);
+    
+  }
+   
 
-// function moveBaddyLeft (){
-//       ctx.drawImage(baddy,baddyXPosition, 500, 45, 45);
-//       baddyXPosition -= 5;
-//       ctx.save();
-//       }
+}
 
-// function baddyMoves(){
-//   if (baddyMovingLeft){
-//     moveBaddyLeft();
-//     if (baddyXPosition <= 0)
-//         return baddyMovingLeft = false;
-//   }else if(!baddyMovingLeft){
-//     moveBaddyRight();
-//     if (baddyXPosition >= 800){
-//        return baddyMovingLeft = true;
-//     }
-// }};
-
+let zed1 = new Zombie(400,150);
+let zed2 = new Zombie(400,300);
+zed2.zombieMovingLeft = true;
+let zed3 = new Zombie(400,450);
+let zed4 = new Zombie(400,600);
+zed4.zombieMovingLeft = true;
+let zed5 = new Zombie(400,750);
+let ddpl = new Hero();
 
 function gameLoop(): void {
   requestAnimationFrame(gameLoop);
   keyInput.inputLoop();
   ctx.fillStyle = "gray";
-  ctx.fillRect(0, 0, 845, 800);
-  zed1.buildZombie();
-  zed2.buildZombie();
-  zed3.buildZombie();
-  zed4.buildZombie();
-  zed5.buildZombie();
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.drawImage(hero, 0, 0, 45,45); 
+  ctx.fillRect(0, 0, 845, 875);
+  zed1.move();
+  zed2.move();
+  zed3.move();
+  zed4.move();
+  zed5.move();
+  ctx.save();  
+  ddpl.build(); 
   ctx.restore(); 
   };
 
@@ -111,44 +128,31 @@ class KeyboardInput {
 };
 
 function ddplUp(): void {
-  y -= 2;
+  y -= 3;
 };
 
 function ddplDown(): void {
-  y += 2;
+  y += 3;
 };
 
 function ddplLeft(): void {
-  x -= 2;
+  x -= 3;
 };
 
 function ddplRight(): void {
-  x += 2;
+  x += 3;
 };
 
 window.onload = () => {
-  hero = <HTMLImageElement>document.getElementById("ddpl");
-  baddy = <HTMLImageElement>document.getElementById("zed");
-  canvas = <HTMLCanvasElement>document.getElementById("myCanvas");
-  ctx = canvas.getContext("2d");
-
   keyInput = new KeyboardInput(); 
-   // PRESS LEFT ARROW OR 'A' KEY
-   keyInput.addKeycodeCallback(37, ddplLeft);
-   keyInput.addKeycodeCallback(65, ddplLeft);
-
-   // PRESS UP ARROW OR 'W' KEY
-   keyInput.addKeycodeCallback(38, ddplUp);
-   keyInput.addKeycodeCallback(87, ddplUp);
-
-   // PRESS RIGHT ARROW OR 'D' KEY
-   keyInput.addKeycodeCallback(39, ddplRight);
-   keyInput.addKeycodeCallback(68, ddplRight);
-
-   // PRESS DOWN ARROW OR 'S' KEY
-   keyInput.addKeycodeCallback(40, ddplDown);
-   keyInput.addKeycodeCallback(83, ddplDown);
-
-   gameLoop();
+  keyInput.addKeycodeCallback(37, ddplLeft);
+  keyInput.addKeycodeCallback(65, ddplLeft);
+  keyInput.addKeycodeCallback(38, ddplUp);
+  keyInput.addKeycodeCallback(87, ddplUp);
+  keyInput.addKeycodeCallback(39, ddplRight);
+  keyInput.addKeycodeCallback(68, ddplRight);
+  keyInput.addKeycodeCallback(40, ddplDown);
+  keyInput.addKeycodeCallback(83, ddplDown);
+  gameLoop();
 };
 
