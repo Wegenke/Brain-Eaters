@@ -1,20 +1,29 @@
-let canvas = <HTMLCanvasElement>document.getElementById("myCanvas");;
+let canvas = <HTMLCanvasElement>document.getElementById("myCanvas");
 let ctx = canvas.getContext("2d");
 let x: number = 10;
 let y: number = 10;
 let gameOver: boolean = false;
+let path = <HTMLImageElement>document.getElementById("path");
+let pathPattern = ctx.createPattern(path , "repeat");
 
 class Zombie {
-  public zombieMovingLeft: boolean = false;
+  public zombieMovingLeft: boolean;
   public zombieImage;
   public zombieXPosition: number;
   public zombieYPosition: number;
   public zombieXPixels: number = 50;
   public zombieYPixels: number = 50;  
-  public speed = (Math.random()*10)*2;
-  constructor(xpos:number,ypos:number) {
+  public speed:number = 3;
+  constructor(xpos:number,ypos:number,zombiemove:boolean) {
     this.zombieXPosition = xpos;
     this.zombieYPosition = ypos;
+    this.zombieMovingLeft = zombiemove;
+    if (this.speed === 3){
+      let spd = (Math.random()*10)+1;
+      if (4 <= spd && spd <= 12){
+        this.speed = spd;
+      }
+    }
   }
 
   moveRight(){
@@ -54,9 +63,6 @@ class Hero{
   public heroXPixels: number = 50;
   public heroYPixels: number = 50;
  
-  contact(){
-
-  }
   build(){
      ctx.translate(x, y);
      ctx.drawImage(this.heroImage, this.heroXPosition, this.heroYPosition, this.heroXPixels, this.heroYPixels);
@@ -66,26 +72,106 @@ class Hero{
 
 }
 
-let zed1 = new Zombie(400,150);
-let zed2 = new Zombie(400,300);
-zed2.zombieMovingLeft = true;
-let zed3 = new Zombie(400,450);
-let zed4 = new Zombie(400,600);
-zed4.zombieMovingLeft = true;
-let zed5 = new Zombie(400,750);
+class Wall{
+  public startXPoint:number;
+  public startYPoint:number;
+  public width:number;
+  public height:number;
+  private pit = <HTMLImageElement>document.getElementById("lava");
+  private pitPattern = ctx.createPattern(this.pit , "repeat");
+  constructor(x,y,w,h){
+    this.startXPoint = x;
+    this.startYPoint = y;
+    this.width = w;
+    this.height = h;
+      }
+  build(){
+   ctx.fillStyle = this.pitPattern; 
+   ctx.fillRect(this.startXPoint, this.startYPoint, this.width, this.height);
+  }
+}
+
+class Bridge{
+  public theBridge = <HTMLImageElement>document.getElementById('bridge');
+  public XCorner:number;
+  public YCorner:number;
+ 
+  constructor(ycorner){
+    this.YCorner = ycorner;
+    if (this.XCorner == undefined){
+     let xc:number = Math.random()*1000;
+      if (xc >= 1 && xc <= 800){
+        this.XCorner = xc;
+      }
+
+  }
+  
+  }
+  build(){
+  ctx.drawImage(this.theBridge, this.XCorner, this.YCorner)
+  }
+  
+  
+}
+
+
 let ddpl = new Hero();
+let wall1 = new Wall(0, 70, 845, 70);
+let wall2 = new Wall(0, 200, 845, 85);
+let wall3 = new Wall(0, 350, 845, 85);
+let wall4 = new Wall(0, 500, 845, 85);
+let wall5 = new Wall(0, 650, 845, 85);
+let wall6 = new Wall(0, 800, 845, 15);
+let brdg1 = new Bridge(55);
+let brdg2 = new Bridge(195);
+let brdg21 = new Bridge(195);
+let brdg3 = new Bridge(345);
+let brdg31 = new Bridge(345);
+let brdg4 = new Bridge(495);
+let brdg41 = new Bridge(495);
+let brdg5 = new Bridge(645);
+let brdg51 = new Bridge(645);
+let brdg52 = new Bridge(645);
+let zed1 = new Zombie(400,150,true);
+let zed2 = new Zombie(400,300,false);
+let zed3 = new Zombie(400,450,true);
+let zed4 = new Zombie(400,600,false);
+let zed5 = new Zombie(400,750,true);
+
+function initialize(){
+  ctx.fillStyle = pathPattern;
+  ctx.fillRect(0, 0, 845, 875);
+  wall1.build();
+  wall2.build();
+  wall3.build();
+  wall4.build();
+  wall5.build();
+  wall6.build();
+  brdg1.build();
+  brdg2.build();
+  brdg21.build();
+  brdg3.build();
+  brdg31.build();
+  brdg4.build();
+  brdg41.build();
+  brdg5.build();
+  brdg51.build();
+  brdg52.build();
+  ctx.save();
+}
+
 
 function gameLoop(): void {
   requestAnimationFrame(gameLoop);
   keyInput.inputLoop();
-  ctx.fillStyle = "gray";
-  ctx.fillRect(0, 0, 845, 875);
+  initialize();
+  ctx.save(); 
   zed1.move();
   zed2.move();
   zed3.move();
   zed4.move();
-  zed5.move();
-  ctx.save();  
+  zed5.move(); 
+  ctx.save(); 
   ddpl.build(); 
   ctx.restore(); 
   };
@@ -143,7 +229,9 @@ function ddplRight(): void {
   x += 3;
 };
 
+
 window.onload = () => {
+  
   keyInput = new KeyboardInput(); 
   keyInput.addKeycodeCallback(37, ddplLeft);
   keyInput.addKeycodeCallback(65, ddplLeft);

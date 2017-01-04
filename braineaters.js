@@ -1,17 +1,24 @@
 var canvas = document.getElementById("myCanvas");
-;
 var ctx = canvas.getContext("2d");
 var x = 10;
 var y = 10;
 var gameOver = false;
+var path = document.getElementById("path");
+var pathPattern = ctx.createPattern(path, "repeat");
 var Zombie = (function () {
-    function Zombie(xpos, ypos) {
-        this.zombieMovingLeft = false;
+    function Zombie(xpos, ypos, zombiemove) {
         this.zombieXPixels = 50;
         this.zombieYPixels = 50;
-        this.speed = (Math.random() * 10) * 2;
+        this.speed = 3;
         this.zombieXPosition = xpos;
         this.zombieYPosition = ypos;
+        this.zombieMovingLeft = zombiemove;
+        if (this.speed === 3) {
+            var spd = (Math.random() * 10) + 1;
+            if (4 <= spd && spd <= 12) {
+                this.speed = spd;
+            }
+        }
     }
     Zombie.prototype.moveRight = function () {
         this.zombieImage = document.getElementById("dez");
@@ -51,27 +58,91 @@ var Hero = (function () {
         this.heroXPixels = 50;
         this.heroYPixels = 50;
     }
-    Hero.prototype.contact = function () {
-    };
     Hero.prototype.build = function () {
         ctx.translate(x, y);
         ctx.drawImage(this.heroImage, this.heroXPosition, this.heroYPosition, this.heroXPixels, this.heroYPixels);
     };
     return Hero;
 }());
-var zed1 = new Zombie(400, 150);
-var zed2 = new Zombie(400, 300);
-zed2.zombieMovingLeft = true;
-var zed3 = new Zombie(400, 450);
-var zed4 = new Zombie(400, 600);
-zed4.zombieMovingLeft = true;
-var zed5 = new Zombie(400, 750);
+var Wall = (function () {
+    function Wall(x, y, w, h) {
+        this.pit = document.getElementById("lava");
+        this.pitPattern = ctx.createPattern(this.pit, "repeat");
+        this.startXPoint = x;
+        this.startYPoint = y;
+        this.width = w;
+        this.height = h;
+    }
+    Wall.prototype.build = function () {
+        ctx.fillStyle = this.pitPattern;
+        ctx.fillRect(this.startXPoint, this.startYPoint, this.width, this.height);
+    };
+    return Wall;
+}());
+var Bridge = (function () {
+    function Bridge(ycorner) {
+        this.theBridge = document.getElementById('bridge');
+        this.YCorner = ycorner;
+        if (this.XCorner == undefined) {
+            var xc = Math.random() * 1000;
+            if (xc >= 1 && xc <= 800) {
+                this.XCorner = xc;
+            }
+        }
+    }
+    Bridge.prototype.build = function () {
+        ctx.drawImage(this.theBridge, this.XCorner, this.YCorner);
+    };
+    return Bridge;
+}());
 var ddpl = new Hero();
+var wall1 = new Wall(0, 70, 845, 70);
+var wall2 = new Wall(0, 200, 845, 85);
+var wall3 = new Wall(0, 350, 845, 85);
+var wall4 = new Wall(0, 500, 845, 85);
+var wall5 = new Wall(0, 650, 845, 85);
+var wall6 = new Wall(0, 800, 845, 15);
+var brdg1 = new Bridge(55);
+var brdg2 = new Bridge(195);
+var brdg21 = new Bridge(195);
+var brdg3 = new Bridge(345);
+var brdg31 = new Bridge(345);
+var brdg4 = new Bridge(495);
+var brdg41 = new Bridge(495);
+var brdg5 = new Bridge(645);
+var brdg51 = new Bridge(645);
+var brdg52 = new Bridge(645);
+var zed1 = new Zombie(400, 150, true);
+var zed2 = new Zombie(400, 300, false);
+var zed3 = new Zombie(400, 450, true);
+var zed4 = new Zombie(400, 600, false);
+var zed5 = new Zombie(400, 750, true);
+function initialize() {
+    ctx.fillStyle = pathPattern;
+    ctx.fillRect(0, 0, 845, 875);
+    wall1.build();
+    wall2.build();
+    wall3.build();
+    wall4.build();
+    wall5.build();
+    wall6.build();
+    brdg1.build();
+    brdg2.build();
+    brdg21.build();
+    brdg3.build();
+    brdg31.build();
+    brdg4.build();
+    brdg41.build();
+    brdg5.build();
+    brdg51.build();
+    brdg52.build();
+    ctx.save();
+}
 function gameLoop() {
     requestAnimationFrame(gameLoop);
     keyInput.inputLoop();
-    ctx.fillStyle = "gray";
-    ctx.fillRect(0, 0, 845, 875);
+    initialize();
+    ctx.save();
     zed1.move();
     zed2.move();
     zed3.move();
