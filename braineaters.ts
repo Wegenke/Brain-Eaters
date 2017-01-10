@@ -1,10 +1,26 @@
 let canvas = <HTMLCanvasElement>document.getElementById("myCanvas");
 let ctx = canvas.getContext("2d");
-let x: number = 10;
-let y: number = 10;
 let gameOver: boolean = false;
 let path = <HTMLImageElement>document.getElementById("path");
 let pathPattern = ctx.createPattern(path , "repeat");
+let zeds = [];
+let alive:boolean = true;
+
+document.onkeydown = function myFunction() {
+switch (event.keyCode) {
+case 38:
+    ddpl.heroYPosition -= 25;
+    break;
+case 40:
+    ddpl.heroYPosition += 25;
+    break;
+case 37:
+    ddpl.heroXPosition -= 25;
+    break;
+case 39:
+    ddpl.heroXPosition += 25;
+    break;
+}} 
 
 class Zombie {
   public zombieMovingLeft: boolean;
@@ -15,15 +31,16 @@ class Zombie {
   public zombieYPixels: number = 50;  
   public speed:number = 3;
   constructor(xpos:number,ypos:number,zombiemove:boolean) {
+    zeds.push(this);
     this.zombieXPosition = xpos;
     this.zombieYPosition = ypos;
     this.zombieMovingLeft = zombiemove;
-    if (this.speed === 3){
-      let spd = (Math.random()*10)+1;
-      if (4 <= spd && spd <= 12){
-        this.speed = spd;
-      }
-    }
+    // if (this.speed === 3){
+    //   let spd = (Math.random()*10)+1;
+    //   if (4 <= spd && spd <= 12){
+    //     this.speed = spd;
+    //   }
+    // }
   }
 
   moveRight(){
@@ -52,7 +69,6 @@ class Zombie {
       this.moveRight();
     }
   }
-
 };
 
 class Hero{
@@ -64,12 +80,8 @@ class Hero{
   public heroYPixels: number = 50;
  
   build(){
-     ctx.translate(x, y);
-     ctx.drawImage(this.heroImage, this.heroXPosition, this.heroYPosition, this.heroXPixels, this.heroYPixels);
-    
+     ctx.drawImage(this.heroImage, this.heroXPosition, this.heroYPosition, this.heroXPixels, this.heroYPixels);    
   }
-   
-
 }
 
 class Wall{
@@ -103,15 +115,11 @@ class Bridge{
       if (xc >= 1 && xc <= 800){
         this.XCorner = xc;
       }
-
-  }
-  
+  }  
   }
   build(){
   ctx.drawImage(this.theBridge, this.XCorner, this.YCorner)
-  }
-  
-  
+  }  
 }
 
 
@@ -123,15 +131,22 @@ let wall4 = new Wall(0, 500, 845, 85);
 let wall5 = new Wall(0, 650, 845, 85);
 let wall6 = new Wall(0, 800, 845, 15);
 let brdg1 = new Bridge(55);
+let brdg11 = new Bridge(55);
+brdg11.XCorner = 785;
 let brdg2 = new Bridge(195);
 let brdg21 = new Bridge(195);
+brdg21.XCorner = 15;
 let brdg3 = new Bridge(345);
 let brdg31 = new Bridge(345);
+brdg31.XCorner = 785;
 let brdg4 = new Bridge(495);
 let brdg41 = new Bridge(495);
+brdg41.XCorner = 15;
 let brdg5 = new Bridge(645);
 let brdg51 = new Bridge(645);
-let brdg52 = new Bridge(645);
+brdg51.XCorner = 785;
+let brdg6 = new Bridge(645);
+brdg6.XCorner = 400;
 let zed1 = new Zombie(400,150,true);
 let zed2 = new Zombie(400,300,false);
 let zed3 = new Zombie(400,450,true);
@@ -148,6 +163,7 @@ function initialize(){
   wall5.build();
   wall6.build();
   brdg1.build();
+  brdg11.build();
   brdg2.build();
   brdg21.build();
   brdg3.build();
@@ -156,91 +172,34 @@ function initialize(){
   brdg41.build();
   brdg5.build();
   brdg51.build();
-  brdg52.build();
+  brdg6.build();
   ctx.save();
+}
+
+function colided(){
+  for (let i = 0; i<zeds.length; i++){
+   let diff = zeds[i].zombieYPosition - ddpl.heroXPosition
+    if (diff <= 50){
+     !alive;
+    }
+  }
 }
 
 
 function gameLoop(): void {
   requestAnimationFrame(gameLoop);
-  keyInput.inputLoop();
-  initialize();
   ctx.save(); 
+  colided(); 
   zed1.move();
   zed2.move();
   zed3.move();
   zed4.move();
   zed5.move(); 
   ctx.save(); 
-  ddpl.build(); 
+  ddpl.build();
   ctx.restore(); 
   };
 
-
-
-class KeyboardInput {
-   public keyCallback: { [keycode: number]: () => void; } = {};
-   public keyDown: { [keycode: number]: boolean; } = {};
-
-   constructor() {
-      document.addEventListener("keydown", this.keyboardDown);
-      document.addEventListener("keyup", this.keyboardUp);
-   }
-
-    public addKeycodeCallback = (keycode: number, f: () => void): void => {
-      this.keyCallback[keycode] = f;
-      this.keyDown[keycode] = false;
-    }
-
-   public keyboardDown = (event: KeyboardEvent): void => {
-      event.preventDefault();
-      this.keyDown[event.keyCode] = true;
-   }
-   public keyboardUp = (event: KeyboardEvent): void => {
-      this.keyDown[event.keyCode] = false;
-   }
-   public inputLoop = (): void => {
-      for (let key in this.keyDown) {
-          let is_down: boolean = this.keyDown[key];
-
-          if (is_down) {
-              let callback: () => void = this.keyCallback[key];
-              if (callback != null) {
-                  callback();
-              }
-          }
-      }
-  }
-};
-
-function ddplUp(): void {
-  y -= 3;
-};
-
-function ddplDown(): void {
-  y += 3;
-};
-
-function ddplLeft(): void {
-  x -= 3;
-};
-
-function ddplRight(): void {
-  x += 3;
-};
-
-
-window.onload = () => {
-  
-  keyInput = new KeyboardInput(); 
-  keyInput.addKeycodeCallback(37, ddplLeft);
-  keyInput.addKeycodeCallback(65, ddplLeft);
-  keyInput.addKeycodeCallback(38, ddplUp);
-  keyInput.addKeycodeCallback(87, ddplUp);
-  keyInput.addKeycodeCallback(39, ddplRight);
-  keyInput.addKeycodeCallback(68, ddplRight);
-  keyInput.addKeycodeCallback(40, ddplDown);
-  keyInput.addKeycodeCallback(83, ddplDown);
-  gameLoop();
-};
+initialize();
+while(alive){gameLoop()};
 

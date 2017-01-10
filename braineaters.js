@@ -1,24 +1,41 @@
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
-var x = 10;
-var y = 10;
 var gameOver = false;
 var path = document.getElementById("path");
 var pathPattern = ctx.createPattern(path, "repeat");
+var zeds = [];
+var alive = true;
+document.onkeydown = function myFunction() {
+    switch (event.keyCode) {
+        case 38:
+            ddpl.heroYPosition -= 25;
+            break;
+        case 40:
+            ddpl.heroYPosition += 25;
+            break;
+        case 37:
+            ddpl.heroXPosition -= 25;
+            break;
+        case 39:
+            ddpl.heroXPosition += 25;
+            break;
+    }
+};
 var Zombie = (function () {
     function Zombie(xpos, ypos, zombiemove) {
         this.zombieXPixels = 50;
         this.zombieYPixels = 50;
         this.speed = 3;
+        zeds.push(this);
         this.zombieXPosition = xpos;
         this.zombieYPosition = ypos;
         this.zombieMovingLeft = zombiemove;
-        if (this.speed === 3) {
-            var spd = (Math.random() * 10) + 1;
-            if (4 <= spd && spd <= 12) {
-                this.speed = spd;
-            }
-        }
+        // if (this.speed === 3){
+        //   let spd = (Math.random()*10)+1;
+        //   if (4 <= spd && spd <= 12){
+        //     this.speed = spd;
+        //   }
+        // }
     }
     Zombie.prototype.moveRight = function () {
         this.zombieImage = document.getElementById("dez");
@@ -59,7 +76,6 @@ var Hero = (function () {
         this.heroYPixels = 50;
     }
     Hero.prototype.build = function () {
-        ctx.translate(x, y);
         ctx.drawImage(this.heroImage, this.heroXPosition, this.heroYPosition, this.heroXPixels, this.heroYPixels);
     };
     return Hero;
@@ -103,15 +119,22 @@ var wall4 = new Wall(0, 500, 845, 85);
 var wall5 = new Wall(0, 650, 845, 85);
 var wall6 = new Wall(0, 800, 845, 15);
 var brdg1 = new Bridge(55);
+var brdg11 = new Bridge(55);
+brdg11.XCorner = 785;
 var brdg2 = new Bridge(195);
 var brdg21 = new Bridge(195);
+brdg21.XCorner = 15;
 var brdg3 = new Bridge(345);
 var brdg31 = new Bridge(345);
+brdg31.XCorner = 785;
 var brdg4 = new Bridge(495);
 var brdg41 = new Bridge(495);
+brdg41.XCorner = 15;
 var brdg5 = new Bridge(645);
 var brdg51 = new Bridge(645);
-var brdg52 = new Bridge(645);
+brdg51.XCorner = 785;
+var brdg6 = new Bridge(645);
+brdg6.XCorner = 400;
 var zed1 = new Zombie(400, 150, true);
 var zed2 = new Zombie(400, 300, false);
 var zed3 = new Zombie(400, 450, true);
@@ -127,6 +150,7 @@ function initialize() {
     wall5.build();
     wall6.build();
     brdg1.build();
+    brdg11.build();
     brdg2.build();
     brdg21.build();
     brdg3.build();
@@ -135,14 +159,21 @@ function initialize() {
     brdg41.build();
     brdg5.build();
     brdg51.build();
-    brdg52.build();
+    brdg6.build();
     ctx.save();
+}
+function colided() {
+    for (var i = 0; i < zeds.length; i++) {
+        var diff = zeds[i].zombieYPosition - ddpl.heroXPosition;
+        if (diff <= 50) {
+            !alive;
+        }
+    }
 }
 function gameLoop() {
     requestAnimationFrame(gameLoop);
-    keyInput.inputLoop();
-    initialize();
     ctx.save();
+    colided();
     zed1.move();
     zed2.move();
     zed3.move();
@@ -153,64 +184,8 @@ function gameLoop() {
     ctx.restore();
 }
 ;
-var KeyboardInput = (function () {
-    function KeyboardInput() {
-        var _this = this;
-        this.keyCallback = {};
-        this.keyDown = {};
-        this.addKeycodeCallback = function (keycode, f) {
-            _this.keyCallback[keycode] = f;
-            _this.keyDown[keycode] = false;
-        };
-        this.keyboardDown = function (event) {
-            event.preventDefault();
-            _this.keyDown[event.keyCode] = true;
-        };
-        this.keyboardUp = function (event) {
-            _this.keyDown[event.keyCode] = false;
-        };
-        this.inputLoop = function () {
-            for (var key in _this.keyDown) {
-                var is_down = _this.keyDown[key];
-                if (is_down) {
-                    var callback = _this.keyCallback[key];
-                    if (callback != null) {
-                        callback();
-                    }
-                }
-            }
-        };
-        document.addEventListener("keydown", this.keyboardDown);
-        document.addEventListener("keyup", this.keyboardUp);
-    }
-    return KeyboardInput;
-}());
-;
-function ddplUp() {
-    y -= 3;
-}
-;
-function ddplDown() {
-    y += 3;
-}
-;
-function ddplLeft() {
-    x -= 3;
-}
-;
-function ddplRight() {
-    x += 3;
-}
-;
-window.onload = function () {
-    keyInput = new KeyboardInput();
-    keyInput.addKeycodeCallback(37, ddplLeft);
-    keyInput.addKeycodeCallback(65, ddplLeft);
-    keyInput.addKeycodeCallback(38, ddplUp);
-    keyInput.addKeycodeCallback(87, ddplUp);
-    keyInput.addKeycodeCallback(39, ddplRight);
-    keyInput.addKeycodeCallback(68, ddplRight);
-    keyInput.addKeycodeCallback(40, ddplDown);
-    keyInput.addKeycodeCallback(83, ddplDown);
+initialize();
+while (alive) {
     gameLoop();
-};
+}
+;
