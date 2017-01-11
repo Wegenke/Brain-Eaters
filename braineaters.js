@@ -13,6 +13,7 @@ var scoreCard = document.getElementById('score');
 var exit = document.getElementById("exit");
 var roundEnd;
 function heroMove() {
+    // if ()
     document.onkeydown = function myFunction() {
         switch (event.keyCode) {
             case 38:
@@ -31,12 +32,12 @@ function heroMove() {
     };
 }
 var Zombie = (function () {
-    function Zombie(xpos, ypos, zombiemove) {
+    function Zombie(ypos, zombiemove) {
+        this.zombieXPosition = 400;
         this.zombieXPixels = 50;
         this.zombieYPixels = 50;
         this.speed = 3;
         zeds.push(this);
-        this.zombieXPosition = xpos;
         this.zombieYPosition = ypos;
         this.zombieMovingLeft = zombiemove;
         if (this.speed === 3) {
@@ -126,8 +127,9 @@ var Wall = (function () {
 var Bridge = (function () {
     function Bridge(ycorner) {
         this.theBridge = document.getElementById('bridge');
+        this.XCorner = 400;
         this.YCorner = ycorner;
-        if (this.XCorner == undefined) {
+        if (this.XCorner === 400) {
             var xc = Math.random() * 1000;
             if (xc >= 10 && xc <= 780) {
                 this.XCorner = xc;
@@ -148,26 +150,26 @@ var wall5 = new Wall(0, 650, 845, 85);
 var wall6 = new Wall(0, 800, 845, 15);
 var brdg1 = new Bridge(55);
 var brdg11 = new Bridge(55);
-brdg11.XCorner = 785;
+// brdg11.XCorner = 780;
 var brdg2 = new Bridge(195);
 var brdg21 = new Bridge(195);
-brdg21.XCorner = 15;
+// brdg21.XCorner = 15;
 var brdg3 = new Bridge(345);
 var brdg31 = new Bridge(345);
-brdg31.XCorner = 785;
+// brdg31.XCorner = 780;
 var brdg4 = new Bridge(495);
 var brdg41 = new Bridge(495);
-brdg41.XCorner = 15;
+// brdg41.XCorner = 15;
 var brdg5 = new Bridge(645);
 var brdg51 = new Bridge(645);
-brdg51.XCorner = 785;
+// brdg51.XCorner = 780;
 var brdg6 = new Bridge(765);
-brdg6.XCorner = 400;
-var zed1 = new Zombie(400, 150, true);
-var zed2 = new Zombie(400, 300, false);
-var zed3 = new Zombie(400, 450, true);
-var zed4 = new Zombie(400, 600, false);
-var zed5 = new Zombie(400, 750, true);
+// brdg6.XCorner = 400;
+var zed1 = new Zombie(150, true);
+var zed2 = new Zombie(300, false);
+var zed3 = new Zombie(450, true);
+var zed4 = new Zombie(600, false);
+var zed5 = new Zombie(750, true);
 var taco1 = new Taco(140);
 var taco2 = new Taco(290);
 var taco3 = new Taco(440);
@@ -249,7 +251,10 @@ function gameLoop() {
         zed3.move();
         zed4.move();
         zed5.move();
-        ctx.drawImage(exit, 750, 795, 100, 100);
+        if (score === 6) {
+            ctx.drawImage(exit, 745, 795, 100, 100);
+        }
+        ;
         ctx.save();
         ddpl.build();
         ctx.restore();

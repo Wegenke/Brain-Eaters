@@ -14,7 +14,7 @@ let exit = <HTMLImageElement>document.getElementById("exit");
 let roundEnd:boolean;
 
 function heroMove(){
-  
+  // if ()
     document.onkeydown = function myFunction() {
       switch (event.keyCode) {
       case 38: // up
@@ -37,14 +37,13 @@ function heroMove(){
 class Zombie {
   public zombieMovingLeft: boolean;
   public zombieImage;
-  public zombieXPosition: number;
+  public zombieXPosition: number = 400;
   public zombieYPosition: number;
   public zombieXPixels: number = 50;
   public zombieYPixels: number = 50;  
   public speed:number = 3;
-  constructor(xpos:number,ypos:number,zombiemove:boolean) {
+  constructor(ypos:number,zombiemove:boolean) {
     zeds.push(this);
-    this.zombieXPosition = xpos;
     this.zombieYPosition = ypos;
     this.zombieMovingLeft = zombiemove;
     if (this.speed === 3){
@@ -138,12 +137,12 @@ class Wall{
 
 class Bridge{
   public theBridge = <HTMLImageElement>document.getElementById('bridge');
-  public XCorner:number;
+  public XCorner:number = 400;
   public YCorner:number;
  
   constructor(ycorner){
     this.YCorner = ycorner;
-    if (this.XCorner == undefined){
+    if (this.XCorner === 400){
      let xc:number = Math.random()*1000;
       if (xc >= 10 && xc <= 780){
         this.XCorner = xc;
@@ -165,26 +164,26 @@ let wall5 = new Wall(0, 650, 845, 85);
 let wall6 = new Wall(0, 800, 845, 15);
 let brdg1 = new Bridge(55);
 let brdg11 = new Bridge(55);
-brdg11.XCorner = 785;
+// brdg11.XCorner = 780;
 let brdg2 = new Bridge(195);
 let brdg21 = new Bridge(195);
-brdg21.XCorner = 15;
+// brdg21.XCorner = 15;
 let brdg3 = new Bridge(345);
 let brdg31 = new Bridge(345);
-brdg31.XCorner = 785;
+// brdg31.XCorner = 780;
 let brdg4 = new Bridge(495);
 let brdg41 = new Bridge(495);
-brdg41.XCorner = 15;
+// brdg41.XCorner = 15;
 let brdg5 = new Bridge(645);
 let brdg51 = new Bridge(645);
-brdg51.XCorner = 785;
+// brdg51.XCorner = 780;
 let brdg6 = new Bridge(765);
 brdg6.XCorner = 400;
-let zed1 = new Zombie(400,150,true);
-let zed2 = new Zombie(400,300,false);
-let zed3 = new Zombie(400,450,true);
-let zed4 = new Zombie(400,600,false);
-let zed5 = new Zombie(400,750,true);
+let zed1 = new Zombie(150,true);
+let zed2 = new Zombie(300,false);
+let zed3 = new Zombie(450,true);
+let zed4 = new Zombie(600,false);
+let zed5 = new Zombie(750,true);
 let taco1 = new Taco(140);
 let taco2 = new Taco(290);
 let taco3 = new Taco(440);
@@ -226,12 +225,12 @@ function tacoDrop(){
 }
 
 function grabbedTaco(){
-    for (let i = 0; i<tacos.length; i++){
-      let xdif = Math.abs(tacos[i].xpos - ddpl.heroXPosition);
-      let ydif = Math.abs(tacos[i].ypos - ddpl.heroYPosition);
-        if (xdif <= 25 && ydif <= 25){
-         tacos[i].xpos += 1000;
-         score++;
+  for (let i = 0; i<tacos.length; i++){
+    let xdif = Math.abs(tacos[i].xpos - ddpl.heroXPosition);
+    let ydif = Math.abs(tacos[i].ypos - ddpl.heroYPosition);
+    if (xdif <= 25 && ydif <= 25){
+      tacos[i].xpos += 1000;
+      score++;
     }
   }
 }
@@ -272,7 +271,7 @@ function gameLoop(): void {
     zed3.move();
     zed4.move();
     zed5.move(); 
-    ctx.drawImage(exit, 750, 795, 100, 100);
+    if (score === 6){ctx.drawImage(exit, 745, 795, 100, 100);};
     ctx.save(); 
     ddpl.build();
     ctx.restore();   
