@@ -4,23 +4,32 @@ var gameOver = false;
 var path = document.getElementById("path");
 var pathPattern = ctx.createPattern(path, "repeat");
 var zeds = [];
-var alive = true;
-document.onkeydown = function myFunction() {
-    switch (event.keyCode) {
-        case 38:
-            ddpl.heroYPosition -= 25;
-            break;
-        case 40:
-            ddpl.heroYPosition += 25;
-            break;
-        case 37:
-            ddpl.heroXPosition -= 25;
-            break;
-        case 39:
-            ddpl.heroXPosition += 25;
-            break;
-    }
-};
+var tacos = [];
+var alive;
+var gameover = document.getElementById('boom');
+var winner = document.getElementById('win');
+var score = 0;
+var scoreCard = document.getElementById('score');
+var exit = document.getElementById("exit");
+var roundEnd;
+function heroMove() {
+    document.onkeydown = function myFunction() {
+        switch (event.keyCode) {
+            case 38:
+                ddpl.heroYPosition -= 25;
+                break;
+            case 40:
+                ddpl.heroYPosition += 25;
+                break;
+            case 37:
+                ddpl.heroXPosition -= 25;
+                break;
+            case 39:
+                ddpl.heroXPosition += 25;
+                break;
+        }
+    };
+}
 var Zombie = (function () {
     function Zombie(xpos, ypos, zombiemove) {
         this.zombieXPixels = 50;
@@ -30,12 +39,12 @@ var Zombie = (function () {
         this.zombieXPosition = xpos;
         this.zombieYPosition = ypos;
         this.zombieMovingLeft = zombiemove;
-        // if (this.speed === 3){
-        //   let spd = (Math.random()*10)+1;
-        //   if (4 <= spd && spd <= 12){
-        //     this.speed = spd;
-        //   }
-        // }
+        if (this.speed === 3) {
+            var spd = (Math.random() * 10) + 1;
+            if (4 <= spd && spd <= 7.5) {
+                this.speed = spd;
+            }
+        }
     }
     Zombie.prototype.moveRight = function () {
         this.zombieImage = document.getElementById("dez");
@@ -65,7 +74,6 @@ var Zombie = (function () {
     };
     return Zombie;
 }());
-;
 var Hero = (function () {
     function Hero() {
         this.touchedAZombie = false;
@@ -79,6 +87,26 @@ var Hero = (function () {
         ctx.drawImage(this.heroImage, this.heroXPosition, this.heroYPosition, this.heroXPixels, this.heroYPixels);
     };
     return Hero;
+}());
+var Taco = (function () {
+    function Taco(Ypos) {
+        this.taco = document.getElementById("taco");
+        this.xpos = 400;
+        this.xpix = 70;
+        this.ypix = 70;
+        tacos.push(this);
+        this.ypos = Ypos;
+        if (this.xpos === 400) {
+            var xp = Math.random() * 1000;
+            if (xp >= 50 && xp <= 750) {
+                this.xpos = xp;
+            }
+        }
+    }
+    Taco.prototype.build = function () {
+        ctx.drawImage(this.taco, this.xpos, this.ypos, this.xpix, this.ypix);
+    };
+    return Taco;
 }());
 var Wall = (function () {
     function Wall(x, y, w, h) {
@@ -101,7 +129,7 @@ var Bridge = (function () {
         this.YCorner = ycorner;
         if (this.XCorner == undefined) {
             var xc = Math.random() * 1000;
-            if (xc >= 1 && xc <= 800) {
+            if (xc >= 10 && xc <= 780) {
                 this.XCorner = xc;
             }
         }
@@ -133,13 +161,19 @@ brdg41.XCorner = 15;
 var brdg5 = new Bridge(645);
 var brdg51 = new Bridge(645);
 brdg51.XCorner = 785;
-var brdg6 = new Bridge(645);
+var brdg6 = new Bridge(765);
 brdg6.XCorner = 400;
 var zed1 = new Zombie(400, 150, true);
 var zed2 = new Zombie(400, 300, false);
 var zed3 = new Zombie(400, 450, true);
 var zed4 = new Zombie(400, 600, false);
 var zed5 = new Zombie(400, 750, true);
+var taco1 = new Taco(140);
+var taco2 = new Taco(290);
+var taco3 = new Taco(440);
+var taco4 = new Taco(590);
+var taco5 = new Taco(740);
+var taco6 = new Taco(820);
 function initialize() {
     ctx.fillStyle = pathPattern;
     ctx.fillRect(0, 0, 845, 875);
@@ -162,30 +196,72 @@ function initialize() {
     brdg6.build();
     ctx.save();
 }
+function tacoDrop() {
+    taco1.build();
+    taco2.build();
+    taco3.build();
+    taco4.build();
+    taco5.build();
+    taco6.build();
+    ctx.save();
+}
+function grabbedTaco() {
+    for (var i = 0; i < tacos.length; i++) {
+        var xdif = Math.abs(tacos[i].xpos - ddpl.heroXPosition);
+        var ydif = Math.abs(tacos[i].ypos - ddpl.heroYPosition);
+        if (xdif <= 25 && ydif <= 25) {
+            tacos[i].xpos += 1000;
+            score++;
+        }
+    }
+}
 function colided() {
+    alive = true;
     for (var i = 0; i < zeds.length; i++) {
-        var diff = zeds[i].zombieYPosition - ddpl.heroXPosition;
-        if (diff <= 50) {
-            !alive;
+        var xdiff = Math.abs(zeds[i].zombieXPosition - ddpl.heroXPosition);
+        var ydiff = Math.abs(zeds[i].zombieYPosition - ddpl.heroYPosition);
+        if (xdiff <= 30 && ydiff <= 30) {
+            alive = false;
+        }
+    }
+}
+function beatRound() {
+    roundEnd = false;
+    if (score === 6) {
+        if (ddpl.heroXPosition >= 755 && ddpl.heroYPosition >= 800) {
+            roundEnd = true;
         }
     }
 }
 function gameLoop() {
-    requestAnimationFrame(gameLoop);
-    ctx.save();
+    scoreCard.innerHTML = score;
+    heroMove();
+    grabbedTaco();
     colided();
-    zed1.move();
-    zed2.move();
-    zed3.move();
-    zed4.move();
-    zed5.move();
-    ctx.save();
-    ddpl.build();
-    ctx.restore();
+    beatRound();
+    if (alive && !roundEnd) {
+        requestAnimationFrame(gameLoop);
+        initialize();
+        tacoDrop();
+        ctx.save();
+        zed1.move();
+        zed2.move();
+        zed3.move();
+        zed4.move();
+        zed5.move();
+        ctx.drawImage(exit, 750, 795, 100, 100);
+        ctx.save();
+        ddpl.build();
+        ctx.restore();
+    }
+    else if (!alive) {
+        ctx.drawImage(gameover, 0, 0, 845, 875);
+    }
+    else if (roundEnd) {
+        ctx.drawImage(winner, 0, 0, 845, 875);
+    }
 }
 ;
-initialize();
-while (alive) {
+window.onload = function () {
     gameLoop();
-}
-;
+};
