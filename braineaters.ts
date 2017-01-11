@@ -18,16 +18,16 @@ function heroMove(){
     document.onkeydown = function myFunction() {
       switch (event.keyCode) {
       case 38: // up
-          ddpl.heroYPosition -= 25;
+          ddpl.HYPos -= 25;
           break;
       case 40: // down
-          ddpl.heroYPosition += 25;
+          ddpl.HYPos += 25;
           break;
       case 37: // left
-          ddpl.heroXPosition -= 25;
+          ddpl.HXPos -= 25;
           break;
       case 39: // right
-          ddpl.heroXPosition += 25;
+          ddpl.HXPos += 25;
           break;
       }
     }
@@ -85,13 +85,14 @@ class Zombie {
 class Hero{
   public touchedAZombie: boolean = false;
   public heroImage = <HTMLImageElement>document.getElementById("ddpl");
-  public heroXPosition: number = 0;
-  public heroYPosition: number = 0;
+  public HXPos: number = 0;
+  public HYPos: number = 0;
   public heroXPixels: number = 50;
   public heroYPixels: number = 50;
- 
+  public XX = this.HXPos + 50;
+  public YY = this.HYPos + 50;
   build(){
-     ctx.drawImage(this.heroImage, this.heroXPosition, this.heroYPosition, this.heroXPixels, this.heroYPixels);    
+     ctx.drawImage(this.heroImage, this.HXPos, this.HYPos, this.heroXPixels, this.heroYPixels);    
   }
 }
 
@@ -226,8 +227,8 @@ function tacoDrop(){
 
 function grabbedTaco(){
   for (let i = 0; i<tacos.length; i++){
-    let xdif = Math.abs(tacos[i].xpos - ddpl.heroXPosition);
-    let ydif = Math.abs(tacos[i].ypos - ddpl.heroYPosition);
+    let xdif = Math.abs(tacos[i].xpos - ddpl.HXPos);
+    let ydif = Math.abs(tacos[i].ypos - ddpl.HYPos);
     if (xdif <= 25 && ydif <= 25){
       tacos[i].xpos += 1000;
       score++;
@@ -238,8 +239,8 @@ function grabbedTaco(){
 function colided(){
   alive = true;
   for (let i = 0; i<zeds.length; i++){
-   let xdiff = Math.abs(zeds[i].zombieXPosition - ddpl.heroXPosition);
-   let ydiff = Math.abs(zeds[i].zombieYPosition - ddpl.heroYPosition);
+   let xdiff = Math.abs(zeds[i].zombieXPosition - ddpl.HXPos);
+   let ydiff = Math.abs(zeds[i].zombieYPosition - ddpl.HYPos);
     if (xdiff <= 30 && ydiff <= 30){
      alive = false;
     }
@@ -249,7 +250,7 @@ function colided(){
 function beatRound(){
   roundEnd = false;
   if (score === 6){
-     if(ddpl.heroXPosition >= 755 && ddpl.heroYPosition >= 800){
+     if(ddpl.HXPos >= 755 && ddpl.HYPos >= 800){
       roundEnd = true;
      }    
   } 

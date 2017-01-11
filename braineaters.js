@@ -17,16 +17,16 @@ function heroMove() {
     document.onkeydown = function myFunction() {
         switch (event.keyCode) {
             case 38:
-                ddpl.heroYPosition -= 25;
+                ddpl.HYPos -= 25;
                 break;
             case 40:
-                ddpl.heroYPosition += 25;
+                ddpl.HYPos += 25;
                 break;
             case 37:
-                ddpl.heroXPosition -= 25;
+                ddpl.HXPos -= 25;
                 break;
             case 39:
-                ddpl.heroXPosition += 25;
+                ddpl.HXPos += 25;
                 break;
         }
     };
@@ -79,13 +79,15 @@ var Hero = (function () {
     function Hero() {
         this.touchedAZombie = false;
         this.heroImage = document.getElementById("ddpl");
-        this.heroXPosition = 0;
-        this.heroYPosition = 0;
+        this.HXPos = 0;
+        this.HYPos = 0;
         this.heroXPixels = 50;
         this.heroYPixels = 50;
+        this.XX = this.HXPos + 50;
+        this.YY = this.HYPos + 50;
     }
     Hero.prototype.build = function () {
-        ctx.drawImage(this.heroImage, this.heroXPosition, this.heroYPosition, this.heroXPixels, this.heroYPixels);
+        ctx.drawImage(this.heroImage, this.HXPos, this.HYPos, this.heroXPixels, this.heroYPixels);
     };
     return Hero;
 }());
@@ -164,7 +166,7 @@ var brdg5 = new Bridge(645);
 var brdg51 = new Bridge(645);
 // brdg51.XCorner = 780;
 var brdg6 = new Bridge(765);
-// brdg6.XCorner = 400;
+brdg6.XCorner = 400;
 var zed1 = new Zombie(150, true);
 var zed2 = new Zombie(300, false);
 var zed3 = new Zombie(450, true);
@@ -209,8 +211,8 @@ function tacoDrop() {
 }
 function grabbedTaco() {
     for (var i = 0; i < tacos.length; i++) {
-        var xdif = Math.abs(tacos[i].xpos - ddpl.heroXPosition);
-        var ydif = Math.abs(tacos[i].ypos - ddpl.heroYPosition);
+        var xdif = Math.abs(tacos[i].xpos - ddpl.HXPos);
+        var ydif = Math.abs(tacos[i].ypos - ddpl.HYPos);
         if (xdif <= 25 && ydif <= 25) {
             tacos[i].xpos += 1000;
             score++;
@@ -220,8 +222,8 @@ function grabbedTaco() {
 function colided() {
     alive = true;
     for (var i = 0; i < zeds.length; i++) {
-        var xdiff = Math.abs(zeds[i].zombieXPosition - ddpl.heroXPosition);
-        var ydiff = Math.abs(zeds[i].zombieYPosition - ddpl.heroYPosition);
+        var xdiff = Math.abs(zeds[i].zombieXPosition - ddpl.HXPos);
+        var ydiff = Math.abs(zeds[i].zombieYPosition - ddpl.HYPos);
         if (xdiff <= 30 && ydiff <= 30) {
             alive = false;
         }
@@ -230,7 +232,7 @@ function colided() {
 function beatRound() {
     roundEnd = false;
     if (score === 6) {
-        if (ddpl.heroXPosition >= 755 && ddpl.heroYPosition >= 800) {
+        if (ddpl.HXPos >= 755 && ddpl.HYPos >= 800) {
             roundEnd = true;
         }
     }
